@@ -82,7 +82,7 @@ setup(ext_modules=cythonize(ext_mods, **cy_opts))
 
 
 def create_module(module_name,expression_name_tuples,directory):
-
+    """Generates a cython module that can be imported."""
     routines = [make_routine(name,[expression],args) for name,expression,args in expression_name_tuples]
 
     if not os.path.exists(directory):
@@ -142,3 +142,11 @@ if __name__ == "__main__":
     module_name = 'temp'
 
     create_module(module_name,expression_name_tuples,directory)
+
+"""
+Use generated module this way!
+>>> from temp.temp import fun_c, anotherfun_c
+>>> print fun_c(1,2,3,4)
+>>> # print anotherfun_c(1,2,3,4)
+
+"""

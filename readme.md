@@ -14,9 +14,7 @@ Requirements
 How to use symcymod?
 --------------------
 
-Provide a list of tuples (<name>,<sympy expression>) which corresponds
-to pairs of the the name of the function and the corresponding sympy
-expression.
+Provide a list of tuples (**name**,**sympy expression**,**argument order**)
+corresponding to the
 
-**Note:** The order of the parameters in each function might change after
-compilation. Passing function arguments as
+Note: The generated methods are suffixed with a **_c** suffix.
