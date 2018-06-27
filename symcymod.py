@@ -83,12 +83,16 @@ setup(ext_modules=cythonize(ext_mods, **cy_opts))
 
 def create_module(module_name,expression_name_tuples,directory):
 
-    routines = [make_routine(name,[expression]) for name,expression in expression_name_tuples]
+    routines = [make_routine(name,[expression],args) for name,expression,args in expression_name_tuples]
 
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-    [(cf, cs), (hf, hs)] = codegen(expression_name_tuples, language='c',prefix=module_name + '_code')
+
+
+    cg = CCodeGen()
+
+    [(cf, cs), (hf, hs)] = cg.write(routines,module_name+'_code')
 
     with open(directory + '/' + cf, "w") as text_file:
         text_file.write(cs)
@@ -97,7 +101,6 @@ def create_module(module_name,expression_name_tuples,directory):
         text_file.write(hs)
 
 
-    cg = CCodeGen()
     ccw = CythonCodeWrapper(cg)
 
     with open(directory + '/' + module_name + '.pyx', "w") as text_file:
@@ -131,7 +134,7 @@ if __name__ == "__main__":
     anotherfun = a*b*c + d
 
 
-    expression_name_tuples = [('fun',fun),('anotherfun',anotherfun)]
+    expression_name_tuples = [('fun',fun,[a,c,d,b]),('anotherfun',anotherfun,[a,b,d,c])]
 
     # dump_pyx
 
