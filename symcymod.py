@@ -1,5 +1,9 @@
+__author__ = "Guru Subramani"
+"""Note: A bunch of this code has been borrowed from sympy.autowrap module. I simply 'hacked it' 
+to create nice python modules! sympy, numpy and python are the best! """
+
 from sympy.utilities.codegen import codegen,CCodeGen,make_routine
-from sympy.utilities.autowrap import CythonCodeWrapper
+from sympy.utilities.autowrap import CythonCodeWrapper,CodeGenArgumentListError,OutputArgument
 import sympy as sym
 import os
 from subprocess import STDOUT, CalledProcessError, check_output
@@ -83,16 +87,33 @@ setup(ext_modules=cythonize(ext_mods, **cy_opts))
 
 def create_module(module_name,expression_name_tuples,directory):
     """Generates a cython module that can be imported."""
-    routines = [make_routine(name,[expression],args) for name,expression,args in expression_name_tuples]
+
+    routines = []
+
+    for name,expression,args in expression_name_tuples:
+        try:
+            routine = make_routine(name, [expression], args)
+
+        except CodeGenArgumentListError as e:
+            new_args = []
+            for missing in e.missing_args:
+                if not isinstance(missing,OutputArgument):
+                    raise
+                new_args.append(missing.name)
+
+            routine = make_routine(name,expression,list(args) + new_args)
+
+        routines.append(routine)
+
 
     if not os.path.exists(directory):
         os.makedirs(directory)
 
 
-
     cg = CCodeGen()
 
     [(cf, cs), (hf, hs)] = cg.write(routines,module_name+'_code')
+
 
     with open(directory + '/' + cf, "w") as text_file:
         text_file.write(cs)

@@ -15,6 +15,8 @@ How to use symcymod?
 --------------------
 
 Provide a list of tuples (**name**,**sympy expression**,**argument order**)
-corresponding to the
+to create a module with the c library.
 
-Note: The generated methods are suffixed with a **_c** suffix.
+Note: The generated methods are suffixed with a **_c**.
+
+For an example, please see the end of the file **symcymod.py**.
