@@ -31,7 +31,7 @@ ext_mods = [Extension(
     extra_compile_args={extra_compile_args},
     extra_link_args={extra_link_args}
 )]
-setup(ext_modules=cythonize(ext_mods, **cy_opts))
+setup(ext_modules=cythonize(ext_mods, **cy_opts),name='{module_name}')
     """
 
     pyx_imports = (
@@ -80,7 +80,8 @@ setup(ext_modules=cythonize(ext_mods, **cy_opts))
                 libraries=self._libraries,
                 extra_compile_args=self._extra_compile_args,
                 extra_link_args=self._extra_link_args,
-                cythonize_options=self._cythonize_options
+                cythonize_options=self._cythonize_options,
+                module_name=self.module_name
             ))
 
 
@@ -129,7 +130,7 @@ def create_module(module_name,expression_name_tuples,directory):
 
     create_setup(module_name + '.pyx',module_name + '_code.c',directory,module_name)
 
-    open(directory+'/__init__.py', 'a').close()
+    open(directory+'/__init__.py', 'w').close()
 
     oldwork = os.getcwd()
     os.chdir(directory)
